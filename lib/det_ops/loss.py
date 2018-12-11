@@ -64,11 +64,26 @@ class SigmoidFocalLoss(nn.Module):
         return loss
 
 
+def smooth_l1_loss(pred, target, beta=1.0, reduction='elementwise_mean'):
+    assert beta > 0
+    assert pred.size() == target.size() and target.numel() > 0
+    diff = torch.abs(pred - target)
+    loss = torch.where(diff < beta, 0.5 * diff * diff / beta,
+                       diff - 0.5 * beta)
+    reduction = F._Reduction.get_enum(reduction)
+    # none: 0, elementwise_mean:1, sum: 2
+    if reduction == 0:
+        return loss
+    elif reduction == 1:
+        return loss.sum() / pred.numel()
+    elif reduction == 2:
+        return loss.sum()
+
+
 class SmoothL1Loss(nn.Module):
 
     def __init__(self):
         super(SmoothL1Loss, self).__init__()
-        self.smooth_l1 = nn.SmoothL1Loss(reduction='none')
 
     def forward(self, offset, target, cls_target):
         # ignore background and ignore label
@@ -79,7 +94,8 @@ class SmoothL1Loss(nn.Module):
         # ig_mask = cls_target == -1
 
         mask = cls_target > 0  # ig_mask * bg_mask
+        # avg_factor = torch.sum(cls_target > 0).float().item() / 4 + 1e-6
         mask = mask.float()
-        loss_raw = (self.smooth_l1(offset, target).sum(2)) * mask
+        loss_raw = (smooth_l1_loss(offset, target, beta=0.11, reduction='none').sum(2)) * mask
         loss = loss_raw.sum(dim=1).div_(mask.sum(dim=1).clamp(min=1.0)).mean()
         return loss
