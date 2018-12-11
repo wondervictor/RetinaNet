@@ -58,7 +58,7 @@ def train(args, config):
     anchor_apsect_ratios = config['aspect_ratios']
     num_anchors = len(anchor_scales) * len(anchor_apsect_ratios)
 
-    model = retina.RetinaNet(config['num_classes'], num_anchors, config['basemodel_path']).cuda()
+    model = retina.RetinaNet(config['num_classes']-1, num_anchors, config['basemodel_path']).cuda()
     model = nn.DataParallel(model, device_ids=list(range(args.device)))
 
     if args.dataset == 'COCO':
@@ -144,4 +144,5 @@ if __name__ == '__main__':
 
     _args = parser.parse_args()
     config = cfg.config[_args.experiment]
+    initialize(config, _args)
     train(_args, config)
