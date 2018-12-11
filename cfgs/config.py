@@ -14,8 +14,8 @@ config = {
         "weight_decay": 1e-4,
         "epochs": 200,
 
-        "basemodel_path": '/home/tianhengcheng/.torch/models/resnet50-19c8e357.pth',
-        "data_dir": "/public_datasets/VOCdevkit",
+        "basemodel_path": '/home/thcheng/workspace/.torch/models/resnet50-19c8e357.pth',
+        "data_dir": "/home/thcheng/workspace/VOCdevkit",
 
         # anchor config
         "positive_anchor_threshold": 0.5,

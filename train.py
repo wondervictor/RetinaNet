@@ -55,7 +55,7 @@ def learning_rate_decay(optimizer, step, config):
 
 def train(args, config):
     anchor_scales = config['anchor_sizes']
-    anchor_apsect_ratios = config['anchor_aspect_ratios']
+    anchor_apsect_ratios = config['aspect_ratios']
     num_anchors = len(anchor_scales) * len(anchor_apsect_ratios)
 
     model = retina.RetinaNet(config['num_classes'], num_anchors, config['basemodel_path']).cuda()
