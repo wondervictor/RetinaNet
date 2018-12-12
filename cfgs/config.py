@@ -9,6 +9,7 @@ config = {
         # lr and general config
         'base_lr': 1e-2,
         "lr_decay": [60000, 80000],
+        "warmup": 500,
         "workers": 8,
         "num_classes": 21,
         "weight_decay": 1e-4,
@@ -31,6 +32,8 @@ config = {
         "max_image_size": 1000,
 
         # test config
+        "test_image_size": [600],
+        "test_max_image_size": 1000,
         "pre_nms_boxes": 1000,
         "test_nms": 0.5,
         "test_max_boxes": 300,

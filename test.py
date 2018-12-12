@@ -127,7 +127,7 @@ def validate(args, config):
     elif args.dataset == 'COCO':
         dataset = coco.COCODetection(dataroot=config['data_dir'], imageset=args.imageset, config=config)
     else:
-        NotImplemented()
+        raise NotImplemented()
     state_dict, _, _, _ = load_checkpoints(model_path)
     model.load_state_dict(state_dict)
 
@@ -140,7 +140,7 @@ def validate(args, config):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser('Test RetinaNet')
     parser.add_argument('-o', '--output', type=str, default='result.det', help='output file path')
     parser.add_argument('-m', '--model_path', type=str, help='saved model path')
     parser.add_argument('-i', '--imageset', type=str, default='val', help='saved model path')

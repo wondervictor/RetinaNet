@@ -224,7 +224,7 @@ def python_eval(output_dir, annotation_dir, imgset='val'):
         'ImageSets',
         'Main',
         imgset + '.txt')
-    cachedir = os.path.join(output_dir, 'annotations_cache')
+    cachedir = os.path.join(annotation_dir, 'annotations_cache')
     aps = []
 
     if not os.path.isdir(output_dir):

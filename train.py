@@ -15,6 +15,7 @@ from datasets import coco, voc, minibatch
 from torch.utils.data import DataLoader
 from lib.det_ops.loss import SigmoidFocalLoss, SmoothL1Loss
 from IPython import embed
+from torch.nn.utils import clip_grad
 import tensorboardX
 from utils import logger
 from cfgs import config as cfg
@@ -44,13 +45,17 @@ def initialize(config, args):
 def learning_rate_decay(optimizer, step, config):
     base_lr = config['base_lr']
     lr = base_lr
+    if step <= config['warmup']:
+        lr = (lr - 1e-4)*step/config['warmup'] + 1e-4
     if step >= config['lr_decay'][0]:
         lr = base_lr * 0.1
-    if step >= config['lr_decay'][0]:
+    if step >= config['lr_decay'][1]:
         lr = base_lr * 0.01
 
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
+
+    return lr
 
 
 def train(args, config):
@@ -103,6 +108,7 @@ def train(args, config):
         data_iter = iter(train_loader)
         pbar = tqdm.tqdm(range(len(train_loader)))
         for i in pbar:
+            lr = learning_rate_decay(optimizer, global_step, config)
             img, labels, boxes = next(data_iter)
             img = img.cuda()
             labels = labels.long().cuda()
@@ -114,17 +120,18 @@ def train(args, config):
 
             optimizer.zero_grad()
             loss.backward()
+            clip_grad.clip_grad_norm_(model.parameters(), 30)
+
             optimizer.step()
             writer.add_scalar('train/box_loss', box_loss.item(), global_step)
             writer.add_scalar('train/cls_loss', cls_loss.item(), global_step)
             global_step += 1
-            pbar.set_description('e:{} i:{} loss:{:.3f} cls_loss:{:.3f} box_loss:{:.3f}'.format(
-                epoch, i + 1, loss.item(), cls_loss.item(), box_loss.item()
+            pbar.set_description('e:{} i:{} loss:{:.3f} cls_loss:{:.3f} box_loss:{:.3f} lr:{}'.format(
+                epoch, i + 1, loss.item(), cls_loss.item(), box_loss.item(), lr
             ))
             losses.append(loss.item())
 
             # learning rate decay
-            learning_rate_decay(optimizer, global_step, config)
 
         print("e:{} loss: {}".format(epoch, np.mean(losses)))
         logger.save_checkpoints(model.module, optimizer, epoch, global_step,
