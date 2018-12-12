@@ -8,6 +8,32 @@ import random
 import argparse
 
 
+CLASSES = ('__BG__',
+           'aeroplane',
+           'bicycle',
+           'bird',
+           'boat',
+           'bottle',
+           'bus',
+           'car',
+           'cat',
+           'chair',
+           'cow',
+           'diningtable',
+           'dog',
+           'horse',
+           'motorbike',
+           'person',
+           'pottedplant',
+           'sheep',
+           'sofa',
+           'train',
+           'tvmonitor')
+
+
+ID_CLASSES = dict(zip(range(21), CLASSES))
+
+
 def show_img(im_path, boxes):
 
     img = cv2.imread(im_path)
@@ -15,7 +41,7 @@ def show_img(im_path, boxes):
         if bb[4] < 0.3:
             continue
         img = cv2.rectangle(img, (int(bb[0]), int(bb[1])), (int(bb[2]), int(bb[3])), (0, 255, 0), 1)
-        img = cv2.putText(img, '{}:{:.2f}'.format(bb[5], bb[4]), (int(bb[0]), int(bb[1])+10), cv2.FONT_HERSHEY_SIMPLEX,
+        img = cv2.putText(img, '{}:{:.2f}'.format(ID_CLASSES[bb[5]], bb[4]), (int(bb[0]), int(bb[1])+10), cv2.FONT_HERSHEY_SIMPLEX,
                           0.5, (0, 255, 0), 1)
     cv2.imshow('img', img)
 
@@ -41,7 +67,7 @@ def main():
         dt[name] = _boxes
 
     for k in dt.keys():
-        show_img('/public_datasets/SynthText/'+k, dt[k])
+        show_img('/home/thcheng/workspace/VOCdevkit/VOC2012/JPEGImages/'+k+'.jpg', dt[k])
 
 
 if __name__ == '__main__':
