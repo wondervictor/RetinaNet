@@ -49,13 +49,14 @@ config = {
         # lr and general config
         'base_lr': 1e-2,
         "lr_decay": [60000, 80000],
-        "workers": 8,
-        "num_classes": 21,
+        "warmup": 2000,
+        "workers": 4,
+        "num_classes": 81,
         "weight_decay": 1e-4,
         "epochs": 200,
 
-        "basemodel_path": '/home/tianhengcheng/.torch/models/resnet50-19c8e357.pth',
-        "data_dir": "/public_datasets/COCO",
+        "basemodel_path": '/hdfs/resrchvc/v-tich/.torch/models/resnet50-19c8e357.pth',
+        "data_dir": "/hdfs/resrchvc/v-tich/cls/data/coco/",
 
         # anchor config
         "positive_anchor_threshold": 0.5,
@@ -67,10 +68,12 @@ config = {
         "base_size": 8,
 
         # dataset
-        "image_scales": [600],
+        "image_scales": [800],
         "max_image_size": 1000,
 
         # test config
+        "test_image_size": [800],
+        "test_max_image_size": 1000,
         "pre_nms_boxes": 1000,
         "test_nms": 0.5,
         "test_max_boxes": 300,

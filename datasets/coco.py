@@ -58,6 +58,10 @@ class COCODetection(Dataset):
         self.catid2id = dict(zip(catids, range(len(catids))))
         self.id2catid = dict(zip(range(len(catids)), catids))
 
+    def get_categories(self):
+        ids = self.coco_helper.getCatIds()
+        return ids
+
     def _get_category_map(self):
         cats = self.coco_helper.loadCats(self.coco_helper.getCatIds())
         cats = [(x['name'], x['id']) for x in cats]

@@ -102,7 +102,9 @@ def train(args, config):
         optimizer.load_state_dict(optimizer_state)
         global_step = step+1
         start_epoch = epoch + 1
-
+    for p in model.module.modules():
+        if p.__class__.__name__ == 'BatchNorm2d':
+            p.eval()
     for epoch in range(start_epoch, config['epochs']):
         losses = []
         data_iter = iter(train_loader)

@@ -1,10 +1,12 @@
 """
 
 """
+import sys
 import argparse
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
+sys.path.append('../')
 import pycocotools.coco as COCO
 import pycocotools.cocoeval as COCOeval
 
